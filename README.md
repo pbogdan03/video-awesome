@@ -5,7 +5,7 @@ This is a prototype SPA meant to illustrate fullscreen video playback and contro
 devices: iOS and Android (TODO: document device matrix limitations and callouts).
 
 Setup
----------
+-----
 
 ```
 // set node version
@@ -27,9 +27,7 @@ For development make sure to:
 Application flow
 ----------------
 
-Upon loading the homepage, video playback will automatically start in fullscreen. On certain frames the playback will pause and
-an overlay will be displayed. The overlay should be transparent and be visually pleasing making use of animations and such. The
-overlay should include a dismiss button which on click removes the overlay and resumes video playback. Upon completion the user should be
+Upon loading the homepage, video playback will automatically start in fullscreen. On certain frames the playback will pause and an overlay will be displayed. The overlay should be transparent and be visually pleasing making use of animations and such. The overlay should include a dismiss button which on click removes the overlay and resumes video playback. Upon completion the user should be
 given the option to restart the experience.
 
 Logical architecture
