@@ -11,6 +11,9 @@ Setup
 // set node version
 nvm use 5.6.0
 
+// build semantic-ui components
+gulp build (in root)
+
 // run the development server (including compilation and live reload)
 npm start (http://localhost:3000)
 
@@ -21,7 +24,7 @@ npm build // TODO
 For development make sure to:
 
 - use gitflow (no branch prefix)
-- do not commit in developmnet
+- do not commit in development
 - install editorconfig
 
 Application flow

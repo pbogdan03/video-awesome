@@ -1,16 +1,20 @@
 var autoprefixer = require('autoprefixer');
-var HandlebarsPlugin = require('handlebars-webpack-plugin');
 
 module.exports = {
-    entry: __dirname + '/src/app.js',
+    entry: __dirname + '/src/index.js',
     output: {
-        path: __dirname + '/build',
+        path: __dirname + '/src',
         filename: 'bundle.js'
     },
     module: {
         loaders: [{
             test: /\.scss$/,
             loaders: ['style', 'css', 'postcss', 'sass']
+        },
+        {
+            test: /\.css$/,
+            exclude: __dirname + '/lib/{components, themes}/',
+            loaders: ['style', 'css']
         },
         {
             test: /\.js$/,
@@ -21,17 +25,16 @@ module.exports = {
                 cacheDirectory: true,
                 presets: 'es2015'
             }
+        },
+        {
+            test: /\.hbs/,
+            loader: 'handlebars-template-loader'
+        },
+        {
+            test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+            loader: 'url-loader?limit=100000'
         }]
     },
-    plugins: [
-        new HandlebarsPlugin({
-            entry: __dirname + '/src/index.hbs',
-            output: __dirname + '/build/index.html',
-            partials: [
-                __dirname + '/src/components/**/*.hbs'
-            ]
-        })
-    ],
     resolve: {
         extensions: ['', '.js']
     },
