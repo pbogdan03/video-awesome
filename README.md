@@ -12,7 +12,7 @@ Setup
 nvm use 5.6.0
 
 // run the development server (including compilation and live reload)
-npm dev // TODO
+npm start (http://localhost:3000)
 
 // or generate the production build
 npm build // TODO
