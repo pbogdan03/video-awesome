@@ -4,7 +4,8 @@
   "description": "awesome video playback",
   "main": "server.js",
   "scripts": {
-    "start": "webpack-dev-server --inline --port 3000 --content-base build/"
+    "dev": "webpack-dev-server --inline --port 3000 --content-base build/"
+    "build": ""
   },
   "repository": {
     "type": "git",
