@@ -1,0 +1,14 @@
+{
+  "name": "video-awesome",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pbogdan03/video-awesome.git"
+  },
+  "engines": {
+    "node": "5.6.0"
+  },
+  "homepage": "https://github.com/pbogdan03/video-awesome#readme",
+  "devDependencies": {
+    "webpack": "^1.12.13"
+  }
+}
