@@ -1,12 +1,15 @@
 @import '~bourbon';
 @import '~neat';
+
 .video-container {
 	@include linear-gradient(to top, red, orange);
-	@include outer-container;
+	@include display(flex);
 }
+
 .full {
-	@include span-columns(12);
+	@include flex(1);
 }
+
 h1:first-child {
 	margin-top: 1rem;
 }

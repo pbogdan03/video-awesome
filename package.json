@@ -4,7 +4,7 @@
   "description": "awesome video playback",
   "main": "server.js",
   "scripts": {
-    "start": "webpack-dev-server --inline --port 3000 --progress --colors"
+    "start": "webpack-dev-server --inline --port 3000 --progress --colors -d"
   },
   "repository": {
     "type": "git",

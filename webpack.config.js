@@ -48,5 +48,6 @@ module.exports = {
     watch: true,
     devServer: {
         contentBase: './dist'
-    }
+    },
+    devtool: 'source-map'
 };
