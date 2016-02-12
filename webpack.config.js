@@ -1,9 +1,14 @@
+var path = require('path');
+var webpack = require('webpack');
 var autoprefixer = require('autoprefixer');
 
 module.exports = {
-    entry: __dirname + '/src/index.js',
+    entry: [
+        path.resolve(__dirname, 'src', 'index'),
+        path.resolve(__dirname, 'src', 'styles.scss')
+    ],
     output: {
-        path: __dirname + '/src',
+        path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js'
     },
     module: {
@@ -12,14 +17,9 @@ module.exports = {
             loaders: ['style', 'css', 'postcss', 'sass']
         },
         {
-            test: /\.css$/,
-            exclude: __dirname + '/lib/{components, themes}/',
-            loaders: ['style', 'css']
-        },
-        {
             test: /\.js$/,
             exclude: /node_modules/,
-            include: __dirname + '/src',
+            include: path.resolve(__dirname, 'src'),
             loader: 'babel-loader',
             query: {
                 cacheDirectory: true,
@@ -36,8 +36,17 @@ module.exports = {
         }]
     },
     resolve: {
+        modulesDirectories: ['node_modules', 'bower_components'],
         extensions: ['', '.js']
     },
+    plugins: [
+        new webpack.ResolverPlugin(
+            new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
+        )
+    ],
     postcss: [ autoprefixer({ browsers: ['last 2 versions'] }) ],
-    watch: true
+    watch: true,
+    devServer: {
+        contentBase: './dist'
+    }
 };

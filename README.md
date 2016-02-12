@@ -11,8 +11,8 @@ Setup
 // set node version
 nvm use 5.6.0
 
-// build semantic-ui components
-gulp build (in root)
+// install dependencies
+npm i && bower install
 
 // run the development server (including compilation and live reload)
 npm start (http://localhost:3000)

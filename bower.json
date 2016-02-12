@@ -1,0 +1,19 @@
+{
+  "name": "video-awesome",
+  "description": "awesome video playback",
+  "main": "index.js",
+  "license": "ISC",
+  "homepage": "https://github.com/pbogdan03/video-awesome",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bourbon": "^4.2.6",
+    "neat": "^1.7.2"
+  }
+}
