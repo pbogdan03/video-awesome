@@ -1,0 +1,19 @@
+@import '~bourbon';
+@import '~neat';
+
+.video-container {
+	@include linear-gradient(to top, red, orange);
+	@include display(flex);
+}
+
+.full {
+	@include flex(1);
+}
+
+h1:first-child {
+	margin-top: 1rem;
+}
+
+video {
+	width: 100%;
+}

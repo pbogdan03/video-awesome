@@ -11,8 +11,11 @@ Setup
 // set node version
 nvm use 5.6.0
 
+// install dependencies
+npm i && bower install
+
 // run the development server (including compilation and live reload)
-npm dev // TODO
+npm start (http://localhost:3000)
 
 // or generate the production build
 npm build // TODO
@@ -21,7 +24,7 @@ npm build // TODO
 For development make sure to:
 
 - use gitflow (no branch prefix)
-- do not commit in developmnet
+- do not commit in development
 - install editorconfig
 
 Application flow
