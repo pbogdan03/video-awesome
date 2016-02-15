@@ -2,6 +2,7 @@
 @import '~neat';
 
 canvas {
+	background-color: #000;
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -17,6 +18,27 @@ canvas {
 	top: 50%;
 	left: 50%;
 	@include transform(translate(-50%, -50%));
+
+	h1, h3 {
+		display: table;
+		background-color: rgba(0, 0, 0, 0.5);
+		padding: 10px;
+		color: #eee;
+	}
+	&__begin {
+		background: none;
+		border: 2px solid #fff;
+
+		&:hover, &:focus {
+			background-color: #fff;
+			color: #000;
+		}
+		&:active {
+			background: none;
+			border: 2px solid #fff;
+			color: #fff;
+		}
+	}
 }
 
 h1:first-child {
@@ -24,5 +46,6 @@ h1:first-child {
 }
 
 video {
+	display: none;
 	width: 100%;
 }

@@ -6,12 +6,18 @@ import videoHbs from './components/video/video.hbs';
 videoJs();
 
 document.addEventListener('DOMContentLoaded', function(){
-    var v = document.querySelectorAll('.video-player')[0];
+    var v = document.querySelectorAll('.video-container__player')[0];
     var canvas = document.querySelectorAll('.canvas-video')[0];
+    var beginBtn = document.querySelectorAll('.video-container__begin')[0];
     var context = canvas.getContext('2d');
 
-    var cw = Math.floor(canvas.clientWidth / 100);
-    var ch = Math.floor(canvas.clientHeight / 100);
+    beginBtn.addEventListener('click', function(e) {
+        v.play();
+        beginBtn.blur();
+    }, false);
+
+    var cw = canvas.clientWidth;
+    var ch = canvas.clientHeight;
     canvas.width = cw;
     canvas.height = ch;
 
