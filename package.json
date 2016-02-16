@@ -39,6 +39,7 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
+    "canvid": "^1.4.0",
     "handlebars": "^4.0.5",
     "jquery": "^2.2.0"
   }
