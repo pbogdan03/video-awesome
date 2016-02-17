@@ -12,6 +12,13 @@ canvas {
 	height: 100%;
 }
 
+.canvas-video {
+	background: url('../dist/assets/frames/1000.png') 0 0;
+	background-position: center;
+	width: 100%;
+	height: 100%;
+}
+
 .video-container {
 	position: absolute;
 	width: 80%;
