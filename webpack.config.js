@@ -31,7 +31,7 @@ module.exports = {
             loader: 'handlebars-template-loader'
         },
         {
-            test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+            test: /\.(png|woff|woff2|eot|ttf|svg|jpg)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
             loader: 'url-loader?limit=100000'
         }]
     },
