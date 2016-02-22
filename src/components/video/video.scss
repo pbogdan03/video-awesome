@@ -12,16 +12,16 @@ canvas {
 	height: 100%;
 }
 
+h1:first-child {
+	margin-top: 1rem;
+}
+
 .canvas-video {
-	//background: url('../dist/assets/frames/optimized/img_01_l.jpg') 40% 0;
-	//background-position: center;
-	//background-size: 2500px 4000px;
-	//background-repeat: no-repeat;
 	width: 100%;
 	height: 100%;
 }
 
-.video-container {
+.video-controls {
 	position: absolute;
 	width: 80%;
 	top: 50%;
@@ -34,11 +34,9 @@ canvas {
 		padding: 10px;
 		color: #eee;
 	}
-}
 
-.video-controls {
-	display: none;
-	&__pause {
+	&__play {
+		display: none;
 		fill: #eee;
 		width: 50px;
 		height: 50px;
@@ -57,62 +55,4 @@ canvas {
 			fill: #eee;
 		}
 	}
-}
-
-.fa {
-	font-size: 25px;
-}
-
-.fa-play:before{
-	margin-left: 20%;
-}
-
-h1:first-child {
-	margin-top: 1rem;
-}
-
-video {
-	display: none;
-	width: 100%;
-}
-
-.spinner {
-  margin: 100px auto;
-  width: 50px;
-  height: 40px;
-  text-align: center;
-  font-size: 10px;
-}
-
-.spinner > div {
-  background-color: #333;
-  height: 100%;
-  width: 6px;
-  display: inline-block;
-
-  @include animation(sk-stretchdelay 1.2s infinite ease-in-out);
-}
-
-.spinner .rect2 {
-  @include animation-delay(-1.1s);
-}
-
-.spinner .rect3 {
-  @include animation-delay(-1.0s);
-}
-
-.spinner .rect4 {
-  @include animation-delay(-0.9s);
-}
-
-.spinner .rect5 {
-  @include animation-delay(-0.8s);
-}
-
-@keyframes sk-stretchdelay {
-  0%, 40%, 100% { 
-    @include transform(scaleY(0.4));
-  }  20% { 
-    @include transform(scaleY(1.0));
-  }
 }
