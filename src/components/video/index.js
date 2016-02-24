@@ -9,16 +9,7 @@ var videoConfig = {
 console.log('Video component loaded...');
 
 var imageSources = [],
-    images = [],
-    videoOpts = {
-        selector: '.canvas-video',
-        frames: 100,
-        cols: 10,
-        fps: 30,
-        loops: 1,
-        width: 800,
-        height: 450
-    };
+    images = [];
 
 for (let i = 0; i <= videoConfig.imageNumber; i++) {
     imageSources.push('./assets/frames/optimized/aliendesert_' + i + '.jpg');
@@ -91,7 +82,7 @@ class VideoPlayer {
         }.bind(this), 1000);
     }
 
-    _playVideo(img, cb) {
+    _playVideo(img, cb) { // TODO: can be packed in videoplayer
         let frameWidth = img.width / this.options.cols,
             frameHeight = img.height / Math.ceil(this.options.frames / this.options.cols),
             currFps = this.options.fps || 15,
@@ -111,12 +102,16 @@ class VideoPlayer {
         };
 
         requestAnimationFrame(() => {
+            
             this._frame(opts);
         });
 
     }
 
     _frame(opts) {
+        // TODO: don't get called on every wait
+        console.log(opts.currFrame);
+
         if (!opts.wait) {
             this._drawFrame(opts);
             opts.currFrame++;
@@ -147,14 +142,6 @@ class VideoPlayer {
     }
 }
 
-var videoPlayer = new VideoPlayer(videoOpts);
-videoPlayer.play();
-
-videoPlayer.loaded = function() {
-    console.log('video is playing...');
-    $('.spinner').hide(); 
-};
-
 var flip = true,
     pause = "M11,10 L18,13.74 18,22.28 11,26 M18,13.74 L26,18 26,18 18,22.28",
     play = "M11,10 L17,10 17,26 11,26 M20,10 L26,10 26,26 20,26";
@@ -174,4 +161,4 @@ function isFunction(obj) {
     return typeof obj === 'function' || !!(obj && obj.constructor && obj.call && obj.apply);
 }
 
-//export default canvidControl; 
+export default VideoPlayer; 
