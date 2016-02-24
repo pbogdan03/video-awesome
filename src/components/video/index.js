@@ -52,85 +52,92 @@ class VideoPlayer {
             cb();
         }
 
-        if(!this.firstImg) {
-            this.firstImg = {};
-            this.firstImg = new Image();
-            this.firstImg.src = imageSources[start];
-            this.firstImg.onload = function() {
-                if(isFunction(this.loaded)) {
-                    this.loaded();
-                }
-                this._playVideo(this.firstImg, () => {
-                    this._videoPlayer(start + 1, finish);
-                });
-            }.bind(this);
-        } else {
-            // play current image
-            this._playVideo(this.currImg, () => {
-                this._videoPlayer(start + 1, finish);
-            });
-        }
-
-        // load next image with a 1s delay from video start
-        setTimeout(function() {
-            this.currImg = {};
-            this.currImg = new Image();
-            this.currImg.src = imageSources[start + 1];
-            this.currImg.onload = function() {
-                console.log('image ' + start + ' loaded');
-            }
-        }.bind(this), 1000);
-    }
-
-    _playVideo(img, cb) { // TODO: can be packed in videoplayer
-        let frameWidth = img.width / this.options.cols,
-            frameHeight = img.height / Math.ceil(this.options.frames / this.options.cols),
-            currFps = this.options.fps || 15,
+        let currFps = this.options.fps || 15,
             delay = 60 / currFps;
 
         let opts = {
-            img: img,
-            frameWidth: frameWidth,
-            frameHeight: frameHeight,
             currFps : currFps,
             currFrame : 0,
             wait : 0,
             playing : true,
             loops : 0,
             delay : delay,
-            cb: cb
+            currClip : start,
+            finishClip : finish,
+            nextClipLoaded : false
         };
 
-        requestAnimationFrame(() => {
-            
-            this._frame(opts);
-        });
+        this.firstImg = {};
+        this.firstImg = new Image();
+        this.firstImg.src = imageSources[opts.currClip];
+        this.firstImg.onload = function() {
+            console.log('image ' + opts.currClip + ' loaded');
+            let frameWidth = this.firstImg.width / this.options.cols,
+                frameHeight = this.firstImg.height / Math.ceil(this.options.frames / this.options.cols);
 
+            opts.frameWidth = frameWidth;
+            opts.frameHeight = frameHeight;    
+            opts.img = this.firstImg;
+
+            if(isFunction(this.loaded)) {
+                this.loaded();
+            }
+            requestAnimationFrame(() => {
+                this._frame(opts, function() {
+                    console.log('video finished');
+                });
+            });
+        }.bind(this);
     }
 
-    _frame(opts) {
+    _frame(opts, cb) {
         // TODO: don't get called on every wait
-        console.log(opts.currFrame);
+        cb = cb || function() {};
 
-        if (!opts.wait) {
+        if(!opts.wait) {
             this._drawFrame(opts);
             opts.currFrame++;
-            if (opts.currFrame < 0) opts.currFrame += this.options.frames;
-            if (opts.currFrame >= this.options.frames) opts.currFrame = 0;
-            if (!opts.currFrame) opts.loops++;
-            if (this.options.loops && opts.loops >= this.options.loops){
-                opts.playing = false;
-                // playback finished
-                opts.cb();
-            }
-        }
-        opts.wait = (opts.wait + 1) % opts.delay;
-        
-        if (opts.playing && this.options.frames > 1) {
+
+            if(opts.currFrame >= this.options.frames) opts.currFrame = 0;
+            if(!opts.currFrame) opts.loops++;
+            if(this.options.loops && opts.loops >= this.options.loops) {
+                console.log('clip ' + parseInt(opts.currClip-1) + ' finished');
+
+                if(opts.currClip >= opts.finishClip) {
+                    console.log('video finished');
+                } else {
+                    opts.nextClipLoaded = false;
+                    opts.img = this.nextImg;
+                    console.log(opts.img);
+                    opts.loops = 0;
+                    opts.currFrame = 0;
+                    requestAnimationFrame(() => {
+                        this._frame(opts);
+                    });
+                }
+            } else {
+                requestAnimationFrame(() => {
+                    this._frame(opts);
+                });
+            }            
+        } else {
             requestAnimationFrame(() => {
                 this._frame(opts);
             });
         }
+
+        if(!opts.nextClipLoaded) {
+            opts.nextClipLoaded = true;
+            setTimeout(function() {
+                this.nextImg = new Image();
+                this.nextImg.src = imageSources[++opts.currClip];
+                this.nextImg.onload = function() {
+                    console.log('image ' + opts.currClip + ' loaded');
+                }
+            }.bind(this), 1000); 
+        }
+
+        opts.wait = (opts.wait + 1) % opts.delay;
     }
 
     _drawFrame(opts) {

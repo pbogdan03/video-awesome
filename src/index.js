@@ -10,7 +10,7 @@ let videoOpts = {
     selector: '.canvas-video',
     frames: 100,
     cols: 10,
-    fps: 5,
+    fps: 30,
     loops: 1,
     width: 800,
     height: 450
