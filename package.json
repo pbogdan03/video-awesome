@@ -4,7 +4,7 @@
   "description": "awesome video playback",
   "main": "server.js",
   "scripts": {
-    "start": "webpack-dev-server --inline --port 3000 --progress --colors -d"
+    "start": "webpack-dev-server --inline --port 3000 --host 0.0.0.0 --progress --colors -d"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
     "css-loader": "^0.23.1",
     "file-loader": "^0.8.5",
     "handlebars-template-loader": "^0.5.4",
+    "handlebars-webpack-plugin": "0.0.6",
     "html-loader": "^0.4.0",
     "node-libs-browser": "^1.0.0",
     "node-sass": "^3.4.2",
@@ -39,6 +40,8 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
-    "handlebars": "^4.0.5"
+    "canvid": "^1.4.0",
+    "handlebars": "^4.0.5",
+    "jquery": "^2.2.0"
   }
 }

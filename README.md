@@ -1,8 +1,7 @@
 Video playback prototype
 ========================
 
-This is a prototype SPA meant to illustrate fullscreen video playback and control cross device. It is targeted at modern mobile
-devices: iOS and Android (TODO: document device matrix limitations and callouts).
+This is a prototype SPA meant to illustrate fullscreen video playback and control cross device. It is targeted at modern mobile devices: iOS and Android (TODO: document device matrix limitations and callouts).
 
 Setup
 -----
@@ -26,6 +25,34 @@ For development make sure to:
 - use gitflow (no branch prefix)
 - do not commit in development
 - install editorconfig
+
+Create jpeg sprites for video playback
+--------------------------------------
+
+Dependencies: Homebrew, ffmpeg, imagemagick, jpegoptim
+
+```
+// install ffmpeg 
+brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
+
+// install imagemagick montage to extract frames
+brew install imagemagick
+
+// install jpeg compressor
+brew install jpegoptim
+
+// create frames from video
+ffmpeg -i ./dist/assets/myvideo.mp4 -vf scale=720:-1 -r 25 "./dist/assets/frames/%04d.png"
+
+// create jpg sprite
+montage -monitor -border 0 -geometry 720x -tile 10x10 -quality 100% ./dist/assets/frames/*.png "/dist/assets/frames/myvideo%02d.jpg"
+
+// according to the number of .png's, set the maximum limit of open files in OSX
+sudo launchctl limit maxfiles 1000000 1000000
+
+// optimize images 
+jpegoptim *.jpg --dest=optimized/ -m85 --strip-all -p
+```
 
 Application flow
 ----------------
