@@ -1,8 +1,7 @@
 Video playback prototype
 ========================
 
-This is a prototype SPA meant to illustrate fullscreen video playback and control cross device. It is targeted at modern mobile
-devices: iOS and Android (TODO: document device matrix limitations and callouts).
+This is a prototype SPA meant to illustrate fullscreen video playback and control cross device. It is targeted at modern mobile devices: iOS and Android (TODO: document device matrix limitations and callouts).
 
 Setup
 -----
@@ -29,6 +28,8 @@ For development make sure to:
 
 Create jpeg sprites for video playback
 --------------------------------------
+
+Dependencies: Homebrew, ffmpeg, imagemagick, jpegoptim
 
 ```
 // install ffmpeg 
