@@ -1,48 +1,46 @@
 0 info it worked if it ends with ok
-1 verbose cli [ '/Users/bogdanp/.nvm/versions/node/v5.6.0/bin/node',
-1 verbose cli   '/Users/bogdanp/.nvm/versions/node/v5.6.0/bin/npm',
+1 verbose cli [ '/usr/local/Cellar/node/5.1.1/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
 1 verbose cli   'start' ]
-2 info using npm@3.6.0
-3 info using node@v5.6.0
+2 info using npm@3.3.12
+3 info using node@v5.1.1
 4 verbose run-script [ 'prestart', 'start', 'poststart' ]
 5 info lifecycle video-awesome@0.1.0~prestart: video-awesome@0.1.0
 6 silly lifecycle video-awesome@0.1.0~prestart: no script for prestart, continuing
 7 info lifecycle video-awesome@0.1.0~start: video-awesome@0.1.0
 8 verbose lifecycle video-awesome@0.1.0~start: unsafe-perm in lifecycle true
-9 verbose lifecycle video-awesome@0.1.0~start: PATH: /Users/bogdanp/.nvm/versions/node/v5.6.0/lib/node_modules/npm/bin/node-gyp-bin:/Users/bogdanp/Documents/PETPROJ/video-awesome/node_modules/.bin:/Users/bogdanp/.nvm/versions/node/v5.6.0/bin:/Users/bogdanp/bin:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+9 verbose lifecycle video-awesome@0.1.0~start: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/Users/bogdanp/Documents/PETPROJ/video-awesome/node_modules/.bin:/Users/bogdanp/bin:/usr/local/opt/coreutils/libexec/gnubin:/Users/bogdanp/.nvm/versions/node/v0.12.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 10 verbose lifecycle video-awesome@0.1.0~start: CWD: /Users/bogdanp/Documents/PETPROJ/video-awesome
 11 silly lifecycle video-awesome@0.1.0~start: Args: [ '-c',
-11 silly lifecycle   'webpack-dev-server --inline --port 3000 --progress --colors' ]
+11 silly lifecycle   'webpack-dev-server --inline --port 3000 --host 192.168.200.156 --progress --colors -d' ]
 12 silly lifecycle video-awesome@0.1.0~start: Returned: code: 1  signal: null
 13 info lifecycle video-awesome@0.1.0~start: Failed to exec start script
-14 verbose stack Error: video-awesome@0.1.0 start: `webpack-dev-server --inline --port 3000 --progress --colors`
+14 verbose stack Error: video-awesome@0.1.0 start: `webpack-dev-server --inline --port 3000 --host 192.168.200.156 --progress --colors -d`
 14 verbose stack Exit status 1
-14 verbose stack     at EventEmitter.<anonymous> (/Users/bogdanp/.nvm/versions/node/v5.6.0/lib/node_modules/npm/lib/utils/lifecycle.js:232:16)
-14 verbose stack     at emitTwo (events.js:100:13)
-14 verbose stack     at EventEmitter.emit (events.js:185:7)
-14 verbose stack     at ChildProcess.<anonymous> (/Users/bogdanp/.nvm/versions/node/v5.6.0/lib/node_modules/npm/lib/utils/spawn.js:24:14)
-14 verbose stack     at emitTwo (events.js:100:13)
-14 verbose stack     at ChildProcess.emit (events.js:185:7)
-14 verbose stack     at maybeClose (internal/child_process.js:827:16)
+14 verbose stack     at EventEmitter.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/lifecycle.js:232:16)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at EventEmitter.emit (events.js:172:7)
+14 verbose stack     at ChildProcess.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/spawn.js:24:14)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at ChildProcess.emit (events.js:172:7)
+14 verbose stack     at maybeClose (internal/child_process.js:818:16)
 14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
 15 verbose pkgid video-awesome@0.1.0
 16 verbose cwd /Users/bogdanp/Documents/PETPROJ/video-awesome
 17 error Darwin 14.5.0
-18 error argv "/Users/bogdanp/.nvm/versions/node/v5.6.0/bin/node" "/Users/bogdanp/.nvm/versions/node/v5.6.0/bin/npm" "start"
-19 error node v5.6.0
-20 error npm  v3.6.0
+18 error argv "/usr/local/Cellar/node/5.1.1/bin/node" "/usr/local/bin/npm" "start"
+19 error node v5.1.1
+20 error npm  v3.3.12
 21 error code ELIFECYCLE
-22 error video-awesome@0.1.0 start: `webpack-dev-server --inline --port 3000 --progress --colors`
+22 error video-awesome@0.1.0 start: `webpack-dev-server --inline --port 3000 --host 192.168.200.156 --progress --colors -d`
 22 error Exit status 1
-23 error Failed at the video-awesome@0.1.0 start script 'webpack-dev-server --inline --port 3000 --progress --colors'.
+23 error Failed at the video-awesome@0.1.0 start script 'webpack-dev-server --inline --port 3000 --host 192.168.200.156 --progress --colors -d'.
 23 error Make sure you have the latest version of node.js and npm installed.
 23 error If you do, this is most likely a problem with the video-awesome package,
 23 error not with npm itself.
 23 error Tell the author that this fails on your system:
-23 error     webpack-dev-server --inline --port 3000 --progress --colors
-23 error You can get information on how to open an issue for this project with:
-23 error     npm bugs video-awesome
-23 error Or if that isn't available, you can get their info via:
+23 error     webpack-dev-server --inline --port 3000 --host 192.168.200.156 --progress --colors -d
+23 error You can get their info via:
 23 error     npm owner ls video-awesome
 23 error There is likely additional logging output above.
 24 verbose exit [ 1, true ]

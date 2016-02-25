@@ -1,11 +1,27 @@
 import $ from 'jquery';
+
 import stylesheet from './styles.scss';
-import videoJs from './components/video/video';
-import videoHbs from './components/video/video.hbs';
-import videoStyles from './components/video/video.scss';
 
-videoJs();
+import VideoPlayer from 'video';
 
-$('body').prepend(videoHbs);
+console.log('Main component loaded...');
 
-console.log('index.js loaded..');
+let videoOpts = {
+    selector: '.canvas-video',
+    frames: 100,
+    cols: 10,
+    fps: 30,
+    loops: 1,
+    width: 800,
+    height: 450
+};
+let videoPlayer = new VideoPlayer(videoOpts);
+
+videoPlayer.play();
+videoPlayer.loaded = function() {
+    console.log('video is playing...');
+    $('.spinner').hide(); 
+};
+videoPlayer.onFrameX = function() {
+    
+};
