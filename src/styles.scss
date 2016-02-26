@@ -5,6 +5,7 @@
 @import '~bitters/app/assets/stylesheets/_variables';
 @import 'components/video/video';
 @import 'components/spinner/spinner';
+@import 'components/overlay/overlay';
 
 html {
 	width: 100%;
@@ -14,8 +15,15 @@ html {
 body {
 	width: 100%;
 	height: 100%;
+	margin: 0;
 }
 
 h1 {
 	font-size: $base-font-size * 2;
+}
+
+.container {
+	position: relative;
+	width: 100%;
+	height: 100%;
 }

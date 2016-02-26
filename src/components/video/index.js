@@ -1,29 +1,27 @@
 import $ from 'jquery';
-import canvid from 'canvid';
+import PubSub from 'pubsub-js';
 
-//import videoConfig from './videoConfig';
+import videoOpts from '../../config';
 import spinner from 'spinner';
-var videoConfig = {
-    imageNumber: 47
-};
 console.log('Video component loaded...');
 
-var imageSources = [],
-    images = [];
-
-for (let i = 0; i <= videoConfig.imageNumber; i++) {
-    imageSources.push('./assets/frames/optimized/aliendesert_' + i + '.jpg');
-}
-
 class VideoPlayer {
-    constructor(options) {
+    constructor($elem, options) {
         this.options = options;
+        this.videoPaused = false;
         this.canvas = document.createElement('canvas');
         this.canvas.width = this.options.width;
         this.canvas.height = this.options.height;
         this.canvas.classList.add('canvid');
+        this.$pauseBtn = $('.video-controls__pause');
+        console.log(this.$pauseBtn);
 
-        document.querySelector(this.options.selector).appendChild(this.canvas);
+        this.$pauseBtn.on('click',() => {
+            playBtnAnim();
+            this.videoPaused = !this.videoPaused;
+        });
+
+        $elem.append(this.canvas);
 
         this.ctx = this.canvas.getContext('2d');
 
@@ -37,13 +35,17 @@ class VideoPlayer {
     }
 
     play() {
-        this._videoPlayer(0, 47, function() {
-            console.log('video finished');
-        });
+        if(!this.videoPaused) {
+            this._videoPlayer(0, videoOpts.imageNumber, function() {
+                console.log('video finished');
+            });
+        } else {
+            this.videoPaused = false;
+        };
     }
 
     pause() {
-        // TODO
+        this.videoPaused = true;
     }
 
     _videoPlayer(start, finish, cb) {
@@ -59,7 +61,6 @@ class VideoPlayer {
             currFps : currFps,
             currFrame : 0,
             wait : 0,
-            playing : true,
             loops : 0,
             delay : delay,
             currClip : start,
@@ -69,8 +70,9 @@ class VideoPlayer {
 
         this.firstImg = {};
         this.firstImg = new Image();
-        this.firstImg.src = imageSources[opts.currClip];
+        this.firstImg.src = this.options.imageSources[opts.currClip];
         this.firstImg.onload = function() {
+            this.$pauseBtn.show();
             console.log('image ' + opts.currClip + ' loaded');
             let frameWidth = this.firstImg.width / this.options.cols,
                 frameHeight = this.firstImg.height / Math.ceil(this.options.frames / this.options.cols);
@@ -79,9 +81,8 @@ class VideoPlayer {
             opts.frameHeight = frameHeight;    
             opts.img = this.firstImg;
 
-            if(isFunction(this.loaded)) {
-                this.loaded();
-            }
+            PubSub.publish('video-loaded', '');
+
             requestAnimationFrame(() => {
                 this._frame(opts, function() {
                     console.log('video finished');
@@ -91,24 +92,32 @@ class VideoPlayer {
     }
 
     _frame(opts, cb) {
-        // TODO: don't get called on every wait
+        console.log(this.videoPaused);
         cb = cb || function() {};
 
-        if(!opts.wait) {
+        if(!opts.wait && !this.videoPaused) {
+            // trigger overlay
+            var currFrame = opts.currClip * 100 + opts.currFrame;
+            if(currFrame === videoOpts.overlayFrame) {
+                this.currFrame = currFrame;
+                PubSub.publish('video-on-frame-' + currFrame, '');
+            }
+            
+            // draw on canvas
             this._drawFrame(opts);
+            
             opts.currFrame++;
-
             if(opts.currFrame >= this.options.frames) opts.currFrame = 0;
             if(!opts.currFrame) opts.loops++;
             if(this.options.loops && opts.loops >= this.options.loops) {
-                console.log('clip ' + parseInt(opts.currClip-1) + ' finished');
+                //console.log('clip ' + parseInt(opts.currClip-1) + ' finished');
 
                 if(opts.currClip >= opts.finishClip) {
                     console.log('video finished');
                 } else {
                     opts.nextClipLoaded = false;
+                    opts.currClip++;
                     opts.img = this.nextImg;
-                    console.log(opts.img);
                     opts.loops = 0;
                     opts.currFrame = 0;
                     requestAnimationFrame(() => {
@@ -130,9 +139,9 @@ class VideoPlayer {
             opts.nextClipLoaded = true;
             setTimeout(function() {
                 this.nextImg = new Image();
-                this.nextImg.src = imageSources[++opts.currClip];
+                this.nextImg.src = this.options.imageSources[opts.currClip + 1];
                 this.nextImg.onload = function() {
-                    console.log('image ' + opts.currClip + ' loaded');
+                    //console.log('image ' + opts.currClip + ' loaded');
                 }
             }.bind(this), 1000); 
         }

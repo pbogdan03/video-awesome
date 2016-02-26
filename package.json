@@ -27,9 +27,11 @@
     "bower": "^1.7.7",
     "css-loader": "^0.23.1",
     "file-loader": "^0.8.5",
+    "gulp": "^3.9.1",
     "handlebars-template-loader": "^0.5.4",
     "handlebars-webpack-plugin": "0.0.6",
     "html-loader": "^0.4.0",
+    "jsonfile": "^2.2.3",
     "node-libs-browser": "^1.0.0",
     "node-sass": "^3.4.2",
     "postcss-loader": "^0.8.0",
@@ -37,11 +39,13 @@
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.13",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.1",
+    "yargs": "^4.2.0"
   },
   "dependencies": {
     "canvid": "^1.4.0",
     "handlebars": "^4.0.5",
-    "jquery": "^2.2.0"
+    "jquery": "^2.2.0",
+    "pubsub-js": "^1.5.3"
   }
 }

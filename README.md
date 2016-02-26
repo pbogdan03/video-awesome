@@ -57,13 +57,19 @@ jpegoptim *.jpg --dest=optimized/ -m85 --strip-all -p
 Application flow
 ----------------
 
-Upon loading the homepage, video playback will automatically start in fullscreen. On certain frames the playback will pause and an overlay will be displayed. The overlay should be transparent and be visually pleasing making use of animations and such. The overlay should include a dismiss button which on click removes the overlay and resumes video playback. Upon completion the user should be
-given the option to restart the experience.
+Upon loading the homepage, video playback will automatically start in fullscreen. On certain frames the playback will pause and an overlay will be displayed. The overlay should be transparent and be visually pleasing making use of animations and such. The overlay should include a dismiss button which on click removes the overlay and resumes video playback. Upon completion the user should be given the option to restart the experience.
 
 Logical architecture
 --------------------
 
-TODO
+The web app uses a component scheme where each component is loaded in the main controller. Each component is loaded when needed and the overlay is displayed on the certain frame from the video component. The configuration file should contain all the necessary data about the video:
+- number of sprite sheets
+- paths for sprite sheets
+- number of frames in each sprite sheet
+- number of columns in each sprite sheet
+- fps
+- number of times the video should repeat
+- number of frame on which to display the overlay
 
 Device matrix
 -------------

@@ -1,19 +1,10 @@
 @import '~bourbon';
 @import '~neat';
 
-canvas {
-	background-color: #000;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
+.video-container {
+	position: relative;
 	width: 100%;
 	height: 100%;
-}
-
-h1:first-child {
-	margin-top: 1rem;
 }
 
 .canvas-video {
@@ -21,22 +12,31 @@ h1:first-child {
 	height: 100%;
 }
 
+canvas {
+	background-color: #000;
+	width: 100%;
+	height: 100%;
+}
+
 .video-controls {
 	position: absolute;
-	width: 80%;
-	top: 50%;
+	top: 0;
 	left: 50%;
-	@include transform(translate(-50%, -50%));
+	width: 80%;
+	height: 100%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
 
 	h1, h3 {
-		display: table;
 		background-color: rgba(0, 0, 0, 0.5);
 		padding: 10px;
 		color: #eee;
 	}
 
-	&__play {
+	&__pause {
 		display: none;
+
 		fill: #eee;
 		width: 50px;
 		height: 50px;
@@ -55,4 +55,8 @@ h1:first-child {
 			fill: #eee;
 		}
 	}
+}
+
+h1:first-child {
+	margin-top: 1rem;
 }
