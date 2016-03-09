@@ -31,39 +31,46 @@ Create jpeg sprites for video playback
 
 Dependencies: Homebrew, ffmpeg, imagemagick, jpegoptim
 
+Install dependencies
+
 ```
-// install ffmpeg 
-brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-frei0r --with-libass --with-libvo-aacenc --with-libvorbis --with-libvpx --with-opencore-amr --with-openjpeg --with-opus --with-rtmpdump --with-schroedinger --with-speex --with-theora --with-tools
+gulp dependencies
+```
 
-// install imagemagick montage to extract frames
-brew install imagemagick
+Use the installed dependencies to generate the sprite sheets
 
-// install jpeg compressor
-brew install jpegoptim
+```
+// generate frames from video
+// input and output need to be passed and the rest are optional
+// not passing fwidth, fheight and ffps sets them to the default values shown below
+gulp frames --input ./dist/assets/myvideo.mp4 --output ./dist/assets/frames/ --fwidth 480 --fheight -1 --ffps 25
 
-// create frames from video
-ffmpeg -i ./dist/assets/myvideo.mp4 -vf scale=720:-1 -r 25 "./dist/assets/frames/%04d.png"
+// generate sprite sheets from frames
+gulp sprites --output ./dist/assets/frames/ --fwidth 480 --mgrid 10 --mquality 100
 
-// create jpg sprite
-montage -monitor -border 0 -geometry 720x -tile 10x10 -quality 100% ./dist/assets/frames/*.png "/dist/assets/frames/myvideo%02d.jpg"
+// optimize sprite sheets
+gulp optimize --output ./dist/assets/frames/
 
-// according to the number of .png's, set the maximum limit of open files in OSX
-sudo launchctl limit maxfiles 1000000 1000000
-
-// optimize images 
-jpegoptim *.jpg --dest=optimized/ -m85 --strip-all -p
+// or run everything at once
+gulp build-sprites --input ./dist/assets/myvideo.mp4 --output ./dist/assets/frames/ --fwidth 480 --fheight -1 --ffps 25 --mgrid 10 --mquality 100
 ```
 
 Application flow
 ----------------
 
-Upon loading the homepage, video playback will automatically start in fullscreen. On certain frames the playback will pause and an overlay will be displayed. The overlay should be transparent and be visually pleasing making use of animations and such. The overlay should include a dismiss button which on click removes the overlay and resumes video playback. Upon completion the user should be
-given the option to restart the experience.
+Upon loading the homepage, video playback will automatically start in fullscreen. On certain frames the playback will pause and an overlay will be displayed. The overlay should be transparent and be visually pleasing making use of animations and such. The overlay should include a dismiss button which on click removes the overlay and resumes video playback. Upon completion the user should be given the option to restart the experience.
 
 Logical architecture
 --------------------
 
-TODO
+The web app uses a component scheme where each component is loaded in the main controller. Each component is loaded when needed and the overlay is displayed on the certain frame from the video component. The configuration file should contain all the necessary data about the video:
+- number of sprite sheets
+- paths for sprite sheets
+- number of frames in each sprite sheet
+- number of columns in each sprite sheet
+- fps
+- number of times the video should repeat
+- number of frame on which to display the overlay
 
 Device matrix
 -------------

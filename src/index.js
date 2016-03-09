@@ -1,27 +1,34 @@
 import $ from 'jquery';
+import PubSub from 'pubsub-js';
 
 import stylesheet from './styles.scss';
 
 import VideoPlayer from 'video';
+import videoOpts from './config';
+import Overlay from 'overlay';
+import Spinner from 'spinner';
 
 console.log('Main component loaded...');
 
-let videoOpts = {
-    selector: '.canvas-video',
-    frames: 100,
-    cols: 10,
-    fps: 30,
-    loops: 1,
-    width: 800,
-    height: 450
-};
-let videoPlayer = new VideoPlayer(videoOpts);
+let videoPlayer = new VideoPlayer($('.canvas-video'), videoOpts);
+let overlay = new Overlay($('.container'));
+let spinner = new Spinner($('.video-controls'));
 
 videoPlayer.play();
-videoPlayer.loaded = function() {
+
+PubSub.subscribe('video-loaded', () => {
     console.log('video is playing...');
-    $('.spinner').hide(); 
-};
-videoPlayer.onFrameX = function() {
-    
-};
+    spinner.hide(); 
+});
+
+PubSub.subscribe('video-on-frame-' + videoOpts.overlayFrame, () => {
+    console.log('overlay shown');
+    overlay.show();
+    videoPlayer.pause();
+    PubSub.subscribe('overlay-close', () => {
+        overlay.hide();
+        videoPlayer.play();
+        PubSub.unsubscribe('overlay-close');
+    });
+    PubSub.unsubscribe('video-on-frame-' + videoOpts.overlayFrame);
+});
