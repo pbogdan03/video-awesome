@@ -10,13 +10,14 @@ class Overlay {
         $elem.append(overlayTemplate({
             overlayFrame: videoOpts.overlayFrame
         }));
-        this.$overlay = $('.overlay');
+        this.$overlay = $elem.find('.overlay');
         this.$overlay.hide();
 
-        $('.overlay__close-btn').on('click', function() {
+        $elem.find('.overlay__close-btn').on('click', () => {
             PubSub.publish('overlay-close', '');
         });
-        $('.overlay__submit-btn').on('click', function() {
+        $elem.find('.overlay__submit-btn').on('click', (ev) => {
+            ev.preventDefault();
             PubSub.publish('overlay-close', '');
         });
     }

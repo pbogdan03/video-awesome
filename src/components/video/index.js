@@ -36,7 +36,7 @@ class VideoPlayer {
 
     play() {
         if(!this.videoPaused) {
-            this._videoPlayer(0, videoOpts.imageNumber, function() {
+            this._videoPlayer(0, videoOpts.imageNumber, () => {
                 console.log('video finished');
             });
         } else {
@@ -84,7 +84,7 @@ class VideoPlayer {
             PubSub.publish('video-loaded', '');
 
             requestAnimationFrame(() => {
-                this._frame(opts, function() {
+                this._frame(opts, () => {
                     console.log('video finished');
                 });
             });
@@ -92,7 +92,6 @@ class VideoPlayer {
     }
 
     _frame(opts, cb) {
-        console.log(this.videoPaused);
         cb = cb || function() {};
 
         if(!opts.wait && !this.videoPaused) {

@@ -16,16 +16,16 @@ let spinner = new Spinner($('.video-controls'));
 
 videoPlayer.play();
 
-PubSub.subscribe('video-loaded', function() {
+PubSub.subscribe('video-loaded', () => {
     console.log('video is playing...');
     spinner.hide(); 
 });
 
-PubSub.subscribe('video-on-frame-' + videoOpts.overlayFrame, function() {
+PubSub.subscribe('video-on-frame-' + videoOpts.overlayFrame, () => {
     console.log('overlay shown');
     overlay.show();
     videoPlayer.pause();
-    PubSub.subscribe('overlay-close', function() {
+    PubSub.subscribe('overlay-close', () => {
         overlay.hide();
         videoPlayer.play();
         PubSub.unsubscribe('overlay-close');
