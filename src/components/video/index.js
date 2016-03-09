@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import PubSub from 'pubsub-js';
+import THREE from 'three';
 
 import videoOpts from '../../config';
 import spinner from 'spinner';
@@ -7,24 +8,6 @@ console.log('Video component loaded...');
 
 class VideoPlayer {
     constructor($elem, options) {
-        this.options = options;
-        this.videoPaused = false;
-        this.canvas = document.createElement('canvas');
-        this.canvas.width = this.options.width;
-        this.canvas.height = this.options.height;
-        this.canvas.classList.add('canvid');
-        this.$pauseBtn = $('.video-controls__pause');
-        console.log(this.$pauseBtn);
-
-        this.$pauseBtn.on('click',() => {
-            playBtnAnim();
-            this.videoPaused = !this.videoPaused;
-        });
-
-        $elem.append(this.canvas);
-
-        this.ctx = this.canvas.getContext('2d');
-
         requestAnimationFrame = window.requestAnimationFrame 
                                 || window.webkitRequestAnimationFrame 
                                 || window.mozRequestAnimationFrame 
@@ -32,6 +15,105 @@ class VideoPlayer {
                                 || function(callback) {
                                     return setTimeout(callback, 1000 / 60);
                                 }
+        this.options = options;
+        this.videoPaused = false;
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = this.options.width;
+        this.canvas.height = this.options.height;
+        //this.canvas.classList.add('canvid');
+        this.$pauseBtn = $('.video-controls__pause');
+
+        this.$pauseBtn.on('click',() => {
+            playBtnAnim();
+            this.videoPaused = !this.videoPaused;
+        });
+
+        this.ctx = this.canvas.getContext('2d');
+
+        ///////////
+        // THREE //
+        ///////////
+
+        this.isUserInteracting = false;
+        this.onPointerDownPointerX = 0;
+        this.onPointerDownPointerY = 0;
+        this.lon = 0;
+        this.onPointerDownLon = 0;
+        this.lat = 0;
+        this.onPointerDownLat = 0;
+        this.phi = 0;
+        this.theta = 0;
+
+        this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
+        this.camera.target = new THREE.Vector3( 0, 0, 0 );
+
+        this.scene = new THREE.Scene();
+
+        var geometry = new THREE.SphereGeometry( 500, 60, 40 );
+        geometry.scale( - 1, 1, 1 );
+
+        this.texture = new THREE.Texture(this.canvas);
+
+        var material = new THREE.MeshBasicMaterial({map: this.texture, overdraw: true, side:THREE.DoubleSide});
+
+        var mesh = new THREE.Mesh( geometry, material );
+        this.scene.add( mesh );
+
+        this.renderer = new THREE.WebGLRenderer();
+        this.renderer.setPixelRatio( window.devicePixelRatio );
+        this.renderer.setSize( window.innerWidth, window.innerHeight );
+
+        document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
+        document.addEventListener( 'mousemove', this._onDocumentMouseMove.bind(this), false );
+        document.addEventListener( 'mouseup', this._onDocumentMouseUp.bind(this), false );
+
+        $elem.append( this.renderer.domElement );
+    }
+
+    _onDocumentMouseDown(ev) {
+        event.preventDefault();
+        console.log(this.lon);
+
+        this.isUserInteracting = true;
+        this.onPointerDownPointerX = event.clientX;
+        this.onPointerDownPointerY = event.clientY;
+
+        this.onPointerDownLon = this.lon;
+        this.onPointerDownLat = this.lat;
+    }
+
+    _onDocumentMouseMove(ev) {
+        if ( this.isUserInteracting === true ) {
+            console.log(this.onPointerDownLon);
+            this.lon = ( this.onPointerDownPointerX - event.clientX ) * 0.1 + this.onPointerDownLon;
+            this.lat = ( event.clientY - this.onPointerDownPointerY ) * 0.1 + this.onPointerDownLat;
+        }
+    }
+
+    _onDocumentMouseUp(ev) {
+        this.isUserInteracting = false;
+    }
+
+    _updateWebGL() {
+        if ( this.isUserInteracting === false ) {
+            this.lon += 0.1;
+        }
+
+        this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
+        this.phi = THREE.Math.degToRad( 90 - this.lat );
+        this.theta = THREE.Math.degToRad( this.lon );
+
+        this.camera.target.x = 500 * Math.sin( this.phi ) * Math.cos( this.theta );
+        this.camera.target.y = 500 * Math.cos( this.phi );
+        this.camera.target.z = 500 * Math.sin( this.phi ) * Math.sin( this.theta );
+
+        this.camera.lookAt( this.camera.target );
+        
+        // // distortion
+        // this.camera.position.copy( this.camera.target ).negate();
+        
+        this.texture.needsUpdate = true;
+        this.renderer.render( this.scene, this.camera );
     }
 
     play() {
@@ -154,6 +236,8 @@ class VideoPlayer {
 
         this.ctx.clearRect(0, 0, this.options.width, this.options.height); // clear frame
         this.ctx.drawImage(opts.img, fx, fy, opts.frameWidth, opts.frameHeight, 0, 0, this.options.width, this.options.height);
+        this._updateWebGL();
+        this.texture.needsUpdate = true;
     }
 }
 

@@ -10,8 +10,8 @@ export default {
     cols: 10,
     fps: 30,
     loops: 1,
-    width: 800,
-    height: 450,
+    width: 1024,
+    height: 512,
     overlayFrame: 120,
     imageNumber: imageNumber,
     imageSources: imageSources
