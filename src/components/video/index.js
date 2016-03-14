@@ -2,7 +2,7 @@ import $ from 'jquery';
 import PubSub from 'pubsub-js';
 import THREE from 'three';
 
-import videoOpts from '../../config';
+import videoOpts from '../../config.json';
 import spinner from 'spinner';
 console.log('Video component loaded...');
 
@@ -16,6 +16,7 @@ class VideoPlayer {
                                     return setTimeout(callback, 1000 / 60);
                                 }
         this.options = options;
+        this.options.loops = 1;
         this.videoPaused = false;
         this.canvas = document.createElement('canvas');
         this.canvas.width = this.options.width;
@@ -67,16 +68,20 @@ class VideoPlayer {
         document.addEventListener( 'mousemove', this._onDocumentMouseMove.bind(this), false );
         document.addEventListener( 'mouseup', this._onDocumentMouseUp.bind(this), false );
 
+        document.addEventListener( 'touchstart', this._onDocumentTouchStart.bind(this), false );
+        document.addEventListener( 'touchmove', this._onDocumentTouchMove.bind(this), false );
+        document.addEventListener( 'touchend', this._onDocumentTouchEnd.bind(this), false );
+
         $elem.append( this.renderer.domElement );
     }
 
     _onDocumentMouseDown(ev) {
-        event.preventDefault();
-        console.log(this.lon);
+        ev.preventDefault();
+        //console.log(this.lon);
 
         this.isUserInteracting = true;
-        this.onPointerDownPointerX = event.clientX;
-        this.onPointerDownPointerY = event.clientY;
+        this.onPointerDownPointerX = ev.clientX;
+        this.onPointerDownPointerY = ev.clientY;
 
         this.onPointerDownLon = this.lon;
         this.onPointerDownLat = this.lat;
@@ -84,13 +89,36 @@ class VideoPlayer {
 
     _onDocumentMouseMove(ev) {
         if ( this.isUserInteracting === true ) {
-            console.log(this.onPointerDownLon);
-            this.lon = ( this.onPointerDownPointerX - event.clientX ) * 0.1 + this.onPointerDownLon;
-            this.lat = ( event.clientY - this.onPointerDownPointerY ) * 0.1 + this.onPointerDownLat;
+            //console.log(this.onPointerDownLon);
+            this.lon = ( this.onPointerDownPointerX - ev.clientX ) * 0.1 + this.onPointerDownLon;
+            this.lat = ( ev.clientY - this.onPointerDownPointerY ) * 0.1 + this.onPointerDownLat;
         }
     }
 
     _onDocumentMouseUp(ev) {
+        this.isUserInteracting = false;
+    }
+
+    _onDocumentTouchStart(ev) {
+        ev.preventDefault();
+
+        this.isUserInteracting = true;
+        this.onPointerDownPointerX = ev.touches[0].clientX;
+        this.onPointerDownPointerY = ev.touches[0].clientY;
+
+        this.onPointerDownLon = this.lon;
+        this.onPointerDownLat = this.lat;
+    }
+
+    _onDocumentTouchMove(ev) {
+        if ( this.isUserInteracting === true ) {
+            //console.log(this.onPointerDownLon);
+            this.lon = ( this.onPointerDownPointerX - ev.touches[0].clientX ) * 0.1 + this.onPointerDownLon;
+            this.lat = ( ev.touches[0].clientY - this.onPointerDownPointerY ) * 0.1 + this.onPointerDownLat;
+        }
+    }
+
+    _onDocumentTouchEnd(ev) {
         this.isUserInteracting = false;
     }
 
@@ -118,7 +146,7 @@ class VideoPlayer {
 
     play() {
         if(!this.videoPaused) {
-            this._videoPlayer(0, videoOpts.imageNumber, () => {
+            this._videoPlayer(0, this.options.imageNumber, () => {
                 console.log('video finished');
             });
         } else {
@@ -178,8 +206,8 @@ class VideoPlayer {
 
         if(!opts.wait && !this.videoPaused) {
             // trigger overlay
-            var currFrame = opts.currClip * 100 + opts.currFrame;
-            if(currFrame === videoOpts.overlayFrame) {
+            var currFrame = opts.currClip * this.options.frames + opts.currFrame;
+            if(currFrame === this.options.overlayFrame) {
                 this.currFrame = currFrame;
                 PubSub.publish('video-on-frame-' + currFrame, '');
             }
@@ -191,7 +219,7 @@ class VideoPlayer {
             if(opts.currFrame >= this.options.frames) opts.currFrame = 0;
             if(!opts.currFrame) opts.loops++;
             if(this.options.loops && opts.loops >= this.options.loops) {
-                //console.log('clip ' + parseInt(opts.currClip-1) + ' finished');
+                // console.log('clip ' + parseInt(opts.currClip-1) + ' finished');
 
                 if(opts.currClip >= opts.finishClip) {
                     console.log('video finished');
@@ -222,12 +250,12 @@ class VideoPlayer {
                 this.nextImg = new Image();
                 this.nextImg.src = this.options.imageSources[opts.currClip + 1];
                 this.nextImg.onload = function() {
-                    //console.log('image ' + opts.currClip + ' loaded');
+                    // console.log('image ' + opts.currClip + ' loaded');
                 }
             }.bind(this), 1000); 
         }
 
-        opts.wait = (opts.wait + 1) % opts.delay;
+        opts.wait = Math.floor((opts.wait + 1) % opts.delay);
     }
 
     _drawFrame(opts) {

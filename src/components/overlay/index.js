@@ -3,12 +3,10 @@ import PubSub from 'pubsub-js';
 
 import overlayTemplate from './overlay.hbs';
 
-import videoOpts from '../../config';
-
 class Overlay {
     constructor($elem) {
         $elem.append(overlayTemplate({
-            overlayFrame: videoOpts.overlayFrame
+            overlayFrame: 120
         }));
         this.$overlay = $elem.find('.overlay');
         this.$overlay.hide();

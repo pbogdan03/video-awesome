@@ -40,6 +40,9 @@ gulp dependencies
 Use the installed dependencies to generate the sprite sheets
 
 ```
+// run this to be safe
+sudo launchctl limit maxfiles 100000 100000 && ulimit -n 100000
+
 // generate frames from video
 // input and output need to be passed and the rest are optional
 // not passing fwidth, fheight and ffps sets them to the default values shown below

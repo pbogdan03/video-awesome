@@ -7,10 +7,11 @@ import VideoPlayer from 'video';
 import videoOpts from './config';
 import Overlay from 'overlay';
 import Spinner from 'spinner';
+import configFile from './config.json';
 
 console.log('Main component loaded...');
 
-let videoPlayer = new VideoPlayer($('.canvas-video'), videoOpts);
+let videoPlayer = new VideoPlayer($('.canvas-video'), configFile);
 let overlay = new Overlay($('.container'));
 let spinner = new Spinner($('.video-controls'));
 
@@ -21,14 +22,14 @@ PubSub.subscribe('video-loaded', () => {
     spinner.hide(); 
 });
 
-PubSub.subscribe('video-on-frame-' + videoOpts.overlayFrame, () => {
-    console.log('overlay shown');
-    overlay.show();
-    videoPlayer.pause();
-    PubSub.subscribe('overlay-close', () => {
-        overlay.hide();
-        videoPlayer.play();
-        PubSub.unsubscribe('overlay-close');
-    });
-    PubSub.unsubscribe('video-on-frame-' + videoOpts.overlayFrame);
-});
+// PubSub.subscribe('video-on-frame-' + videoOpts.overlayFrame, () => {
+//     console.log('overlay shown');
+//     overlay.show();
+//     videoPlayer.pause();
+//     PubSub.subscribe('overlay-close', () => {
+//         overlay.hide();
+//         videoPlayer.play();
+//         PubSub.unsubscribe('overlay-close');
+//     });
+//     PubSub.unsubscribe('video-on-frame-' + videoOpts.overlayFrame);
+// });

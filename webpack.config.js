@@ -9,8 +9,8 @@ module.exports = {
         path.resolve(__dirname, 'src', 'styles.scss')
     ],
     output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js'
+        path: __dirname,
+        filename: 'bundle.js',
     },
     module: {
         loaders: [{
@@ -34,6 +34,9 @@ module.exports = {
         {
             test: /\.(png|woff|woff2|eot|ttf|svg|jpg)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
             loader: 'url-loader?limit=100000'
+        },
+        {
+            test: /\.json$/, loader: 'json-loader'
         }]
     },
     resolve: {

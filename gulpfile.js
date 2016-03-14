@@ -1,13 +1,16 @@
 'use strict';
 
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var argv = require('yargs').argv;
-var childProcess = require('child_process');
-var exec = childProcess.exec;
-var spawn = childProcess.spawn;
-var jsonfile = require('jsonfile');
-var fs = require('fs');
+const gulp = require('gulp');
+const gutil = require('gulp-util');
+const jpegoptim = require('imagemin-jpegoptim');
+const gulpFn = require('gulp-fn');
+const argv = require('yargs').argv;
+const childProcess = require('child_process');
+const exec = childProcess.exec;
+const spawn = childProcess.spawn;
+const jsonfile = require('jsonfile');
+const fs = require('fs');
+const sizeOf = require('image-size');
 
 let configFile = './src/config.json';
 let VIDEO_CONFIG = {};
@@ -17,12 +20,13 @@ let fheight = (argv.fheight === undefined) ? -1: argv.fheight;
 let ffps = (argv.ffps === undefined) ? 25: argv.ffps;
 let finput = (argv.input === undefined) ? false: argv.input;
 let foutput = (argv.output === undefined) ? false: argv.output;
+let frameDim = {};
 
 let mgrid = (argv.mgrid === undefined) ? 10: argv.mgrid;
 let mquality = (argv.mquality === undefined) ? 100: argv.mquality;
 
-gulp.task('build-sprites', ['optimize'], (cb) => {
-    console.log('--------------- \n sprites done! \n ------------------');
+gulp.task('build-sprites', ['frames', 'sprites', 'optimize'], (cb) => {
+    console.log('---------------\nsprites done!\n---------------');
     cb();
 });
 
@@ -35,9 +39,20 @@ gulp.task('test-var', (cb) => {
         // if config file empty
         VIDEO_CONFIG = obj || {};
 
-        if(!finput || !foutput) {
+        if(finput && foutput) {
+            VIDEO_CONFIG.input = finput;
+            VIDEO_CONFIG.output = foutput;
+        }
+
+        if(!VIDEO_CONFIG.input || !VIDEO_CONFIG.output) {
             console.log('Warning: Please set video input and/or output path...');
         } else {
+            VIDEO_CONFIG.fps = ffps;
+            VIDEO_CONFIG.frames = mgrid * mgrid;
+            VIDEO_CONFIG.cols = mgrid;
+            VIDEO_CONFIG.width = fwidth;
+            VIDEO_CONFIG.height = fheight;
+            VIDEO_CONFIG.quality = mquality;
             jsonfile.writeFile(configFile, VIDEO_CONFIG, (err) => {
                 console.log(err);
             });
@@ -77,37 +92,70 @@ gulp.task('jpegoptim', (cb) => {
 });
 
 gulp.task('frames', ['test-var'], (cb) => {
-    var frames = spawn('ffmpeg', ['-i', finput, '-vf', 'scale=' + fwidth + ':' + fheight, '-r', ffps, foutput + '%d.png']);
+    spawn('mkdir', [VIDEO_CONFIG.output + 'frames']);
+
+    var frames = spawn('ffmpeg', ['-i', VIDEO_CONFIG.input, '-vf', 'scale=' + VIDEO_CONFIG.width + ':' + VIDEO_CONFIG.height, '-r', VIDEO_CONFIG.fps, './dist/' + VIDEO_CONFIG.output + 'frames/%04d.png']);
     frames.stdout.on('data', (data) => {gutil.log(data.toString())});
     frames.stderr.on('data', (data) => {gutil.log(data.toString())});
     frames.on('exit', (code) => {
         if(code != 0) {
             console.log('Failed: ' + code);
         }
-        cb();
+        sizeOf('./dist/' + VIDEO_CONFIG.output + 'frames/0001.png', (err, dim) => {
+            VIDEO_CONFIG.width = dim.width;
+            VIDEO_CONFIG.height = dim.height;
+            jsonfile.writeFile(configFile, VIDEO_CONFIG, (err) => {
+                console.log(err);
+                cb();
+            });
+        });
     });
 });
 
 gulp.task('sprites', ['test-var', 'frames'], (cb) => {
-    var sprites = spawn('montage', ['-monitor', '-border', '0', '-geometry', fwidth + 'x', '-tile', mgrid + 'x' + mgrid, '-quality', mquality + '%', foutput + '*.png', foutput + 'video%d.jpg']);
+    spawn('mkdir', [VIDEO_CONFIG.output + 'frames/sprites']);
+
+    var sprites = spawn('montage', ['-monitor', '-border', '0', '-geometry', VIDEO_CONFIG.width + 'x', '-tile', VIDEO_CONFIG.cols + 'x' + VIDEO_CONFIG.cols, '-quality', VIDEO_CONFIG.quality + '%', './dist/' + VIDEO_CONFIG.output + 'frames/*.png', './dist/' + VIDEO_CONFIG.output + 'frames/sprites/video%d.jpg']);
     sprites.stdout.on('data', (data) => {gutil.log(data.toString())});
     sprites.stderr.on('data', (data) => {gutil.log(data.toString())});
     sprites.on('exit', (code) => {
         if(code != 0) {
             console.log('Failed: ' + code);
         }
-        cb();
+        fs.readdir('./dist/' + VIDEO_CONFIG.output + 'frames/sprites/', function(err, files) {
+            VIDEO_CONFIG.imageNumber = files.length;
+            jsonfile.writeFile(configFile, VIDEO_CONFIG, (err) => {
+                console.log(err);
+                cb();
+            });
+        });
     });
 });
 
-gulp.task('optimize', ['test-var', 'sprites'], (cb) => {
-    var optimize = spawn('jpegoptim', [foutput + '*.jpg', '--dest=optimized/', '-m85', '--strip-all', '-p', '--all-progressive']);
-    optimize.stdout.on('data', (data) => {gutil.log(data.toString())});
-    optimize.stderr.on('data', (data) => {gutil.log(data.toString())});
-    optimize.on('exit', (code) => {
-        if(code != 0) {
-            console.log('Failed: ' + code);
+gulp.task('_optimize-files', ['sprites'], () => {
+    var counter = 0;
+
+    return gulp.src('./dist/' + VIDEO_CONFIG.output + 'frames/sprites/*.jpg')
+        .pipe(jpegoptim({
+            progressive: true,
+            max: 85
+        })())
+        .pipe(gulp.dest('./dist/' + VIDEO_CONFIG.output + 'frames/sprites/optimized'))
+        .pipe(gulpFn(function(file) {
+            console.log('image ' + counter++ + ' done');
+        }));
+})
+
+gulp.task('optimize', ['test-var', '_optimize-files'], (cb) => {
+    VIDEO_CONFIG.imageSources = [];
+    for (let i = 0; i < VIDEO_CONFIG.imageNumber; i++) {
+        VIDEO_CONFIG.imageSources.push(VIDEO_CONFIG.output + 'frames/sprites/optimized/video' + i + '.jpg');
+    }
+    jsonfile.writeFile(configFile, VIDEO_CONFIG, (err) => {
+        if(err) {
+            console.log(err);
         }
+        console.log('jsonfile written...');
         cb();
     });
 });
