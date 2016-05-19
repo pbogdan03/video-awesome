@@ -16,11 +16,19 @@ class VideoPlayer {
                                     return setTimeout(callback, 1000 / 60);
                                 }
         this.options = options;
+
+        // FOR TESTING ONLY
+        if(this.options.height === -1) {
+            this.options.height = 256;
+        }
+        this.options.width = 512;
+        // END FOR TESTING ONLY
+
         this.options.loops = 1;
         this.videoPaused = false;
         this.canvas = document.createElement('canvas');
-        this.canvas.width = this.options.width;
-        this.canvas.height = this.options.height;
+        this.canvas.width = '512'; //this.options.width;
+        this.canvas.height = '256'; //this.options.height === -1 ? '360' : this.options.height; //TODO no fixed value
         //this.canvas.classList.add('canvid');
         this.$pauseBtn = $('.video-controls__pause');
 
@@ -44,6 +52,7 @@ class VideoPlayer {
         this.onPointerDownLat = 0;
         this.phi = 0;
         this.theta = 0;
+        let deg2rad = Math.PI / 180;
 
         this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
         this.camera.target = new THREE.Vector3( 0, 0, 0 );
@@ -72,7 +81,19 @@ class VideoPlayer {
         document.addEventListener( 'touchmove', this._onDocumentTouchMove.bind(this), false );
         document.addEventListener( 'touchend', this._onDocumentTouchEnd.bind(this), false );
 
-        $elem.append( this.renderer.domElement );
+        if (typeof window.DeviceOrientationEvent != "undefined") {
+            window.addEventListener("deviceorientation", function(e) {
+                this.camera.rotation.set (
+                    !e.beta  ? 0 : e.beta * deg2rad,
+                    !e.gamma ? 0 : e.gamma * deg2rad,
+                    !e.alpha ? 0 : e.alpha * deg2rad
+                );
+            }.bind(this), false);
+        } else {
+            alert("Device Orientation not supported");
+        }
+
+        $elem.append( this.renderer.domElement ); //this.renderer.domElement
     }
 
     _onDocumentMouseDown(ev) {
@@ -100,7 +121,7 @@ class VideoPlayer {
     }
 
     _onDocumentTouchStart(ev) {
-        ev.preventDefault();
+        //ev.preventDefault();
 
         this.isUserInteracting = true;
         this.onPointerDownPointerX = ev.touches[0].clientX;
@@ -264,6 +285,15 @@ class VideoPlayer {
 
         this.ctx.clearRect(0, 0, this.options.width, this.options.height); // clear frame
         this.ctx.drawImage(opts.img, fx, fy, opts.frameWidth, opts.frameHeight, 0, 0, this.options.width, this.options.height);
+        console.log('fx', fx);
+        console.log('fy', fy);
+        console.log('opts.currFrame', opts.currFrame);
+        console.log('this.options.cols', this.options.cols);
+        console.log('opts.frameWidth', opts.frameWidth);
+        console.log('opts.frameHeight', opts.frameHeight);
+        console.log('this.options.width', this.options.width);
+        console.log('this.options.height', this.options.height);
+
         this._updateWebGL();
         this.texture.needsUpdate = true;
     }

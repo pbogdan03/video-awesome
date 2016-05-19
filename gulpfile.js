@@ -20,7 +20,6 @@ let fheight = (argv.fheight === undefined) ? -1: argv.fheight;
 let ffps = (argv.ffps === undefined) ? 25: argv.ffps;
 let finput = (argv.input === undefined) ? false: argv.input;
 let foutput = (argv.output === undefined) ? false: argv.output;
-let frameDim = {};
 
 let mgrid = (argv.mgrid === undefined) ? 10: argv.mgrid;
 let mquality = (argv.mquality === undefined) ? 100: argv.mquality;
@@ -92,16 +91,16 @@ gulp.task('jpegoptim', (cb) => {
 });
 
 gulp.task('frames', ['test-var'], (cb) => {
-    spawn('mkdir', [VIDEO_CONFIG.output + 'frames']);
+    spawn('mkdir', ['./dist/' + VIDEO_CONFIG.output + 'frames']);
 
     var frames = spawn('ffmpeg', ['-i', VIDEO_CONFIG.input, '-vf', 'scale=' + VIDEO_CONFIG.width + ':' + VIDEO_CONFIG.height, '-r', VIDEO_CONFIG.fps, './dist/' + VIDEO_CONFIG.output + 'frames/%04d.png']);
-    frames.stdout.on('data', (data) => {gutil.log(data.toString())});
-    frames.stderr.on('data', (data) => {gutil.log(data.toString())});
+    frames.stdout.on('data', (data) => {gutil.log(data.toString());});
+    frames.stderr.on('data', (data) => {gutil.log(data.toString());});
     frames.on('exit', (code) => {
-        if(code != 0) {
+        if(code !== 0) {
             console.log('Failed: ' + code);
         }
-        sizeOf('./dist/' + VIDEO_CONFIG.output + 'frames/0001.png', (err, dim) => {
+        sizeOf(VIDEO_CONFIG.output + '0001.png', (err, dim) => {
             VIDEO_CONFIG.width = dim.width;
             VIDEO_CONFIG.height = dim.height;
             jsonfile.writeFile(configFile, VIDEO_CONFIG, (err) => {
@@ -113,16 +112,16 @@ gulp.task('frames', ['test-var'], (cb) => {
 });
 
 gulp.task('sprites', ['test-var', 'frames'], (cb) => {
-    spawn('mkdir', [VIDEO_CONFIG.output + 'frames/sprites']);
+    spawn('mkdir', [VIDEO_CONFIG.output + 'sprites']);
 
-    var sprites = spawn('montage', ['-monitor', '-border', '0', '-geometry', VIDEO_CONFIG.width + 'x', '-tile', VIDEO_CONFIG.cols + 'x' + VIDEO_CONFIG.cols, '-quality', VIDEO_CONFIG.quality + '%', './dist/' + VIDEO_CONFIG.output + 'frames/*.png', './dist/' + VIDEO_CONFIG.output + 'frames/sprites/video%d.jpg']);
-    sprites.stdout.on('data', (data) => {gutil.log(data.toString())});
-    sprites.stderr.on('data', (data) => {gutil.log(data.toString())});
+    var sprites = spawn('montage', ['-monitor', '-border', '0', '-geometry', VIDEO_CONFIG.width + 'x', '-tile', VIDEO_CONFIG.cols + 'x' + VIDEO_CONFIG.cols, '-quality', VIDEO_CONFIG.quality + '%', VIDEO_CONFIG.output + '*.png', VIDEO_CONFIG.output + 'sprites/video%d.jpg']);
+    sprites.stdout.on('data', (data) => {gutil.log(data.toString());});
+    sprites.stderr.on('data', (data) => {gutil.log(data.toString());});
     sprites.on('exit', (code) => {
-        if(code != 0) {
+        if(code !== 0) {
             console.log('Failed: ' + code);
         }
-        fs.readdir('./dist/' + VIDEO_CONFIG.output + 'frames/sprites/', function(err, files) {
+        fs.readdir(VIDEO_CONFIG.output + 'sprites/', function(err, files) {
             VIDEO_CONFIG.imageNumber = files.length;
             jsonfile.writeFile(configFile, VIDEO_CONFIG, (err) => {
                 console.log(err);
@@ -132,24 +131,24 @@ gulp.task('sprites', ['test-var', 'frames'], (cb) => {
     });
 });
 
-gulp.task('_optimize-files', ['sprites'], () => {
+gulp.task('_optimize-files', () => {
     var counter = 0;
 
-    return gulp.src('./dist/' + VIDEO_CONFIG.output + 'frames/sprites/*.jpg')
+    return gulp.src('./dist/assets/frames/sprites/*.jpg')
         .pipe(jpegoptim({
             progressive: true,
             max: 85
         })())
-        .pipe(gulp.dest('./dist/' + VIDEO_CONFIG.output + 'frames/sprites/optimized'))
+        .pipe(gulp.dest('./dist/assets/frames/sprites/optimized'))
         .pipe(gulpFn(function(file) {
             console.log('image ' + counter++ + ' done');
         }));
-})
+});
 
 gulp.task('optimize', ['test-var', '_optimize-files'], (cb) => {
     VIDEO_CONFIG.imageSources = [];
     for (let i = 0; i < VIDEO_CONFIG.imageNumber; i++) {
-        VIDEO_CONFIG.imageSources.push(VIDEO_CONFIG.output + 'frames/sprites/optimized/video' + i + '.jpg');
+        VIDEO_CONFIG.imageSources.push('./assets/frames/sprites/optimized/video' + i + '.jpg');
     }
     jsonfile.writeFile(configFile, VIDEO_CONFIG, (err) => {
         if(err) {
